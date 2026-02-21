@@ -287,7 +287,10 @@ async function loadDetail(url) {
         
         const studio = "NimeStream"; 
         
-        const totalEps = info.total_episode || info.episode || '?';
+        const totalEps =
+        info.total_episode ??
+        info.episode ??
+        (data.episodes ? data.episodes.length : 0);
         const duration = info.durasi || info.duration || '0 Menit';
         
         const musim = info.musim || info.season || '';
