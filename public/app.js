@@ -33,8 +33,7 @@ async function loadLatest() {
     homeContainer.innerHTML = ''; 
 
     try {
-        for (let i = 0; i < HOME_SECTIONS.length; i++) {
-    const section = HOME_SECTIONS[i]; 
+        HOME_SECTIONS.forEach(async (section, i) => {
             let combinedData = [];
 
             if (section.mode === 'latest') {
@@ -96,8 +95,7 @@ async function loadLatest() {
                     renderSection(section.title, combinedData.slice(0, 15), homeContainer);
                 }
             }
-        }
-    
+        });
     } catch (err) {
         console.error(err);
     } finally {
@@ -198,25 +196,19 @@ function renderSection(title, data, container) {
     `;
 
     const cardsHtml = data.map(anime => {
-    const episode = anime.episode ? anime.episode : null;
-    const score = anime.score ? anime.score : null;
-    const displayTitle = anime.title.length > 35 
-        ? anime.title.substring(0, 35) + '...' 
-        : anime.title;
-    
-    return `
-    <div class="scroll-card" onclick="loadDetail('${anime.url}')">
-        <div class="scroll-card-img">
-            <img src="${anime.image}" alt="${anime.title}" loading="lazy">
-            
-            ${episode ? `<div class="ep-badge">EP ${episode}</div>` : ''}
-            ${score ? `<div class="rating-badge">⭐ ${score}</div>` : ''}
-            
+        const eps = anime.episode || anime.score || '?'; 
+        const displayTitle = anime.title.length > 35 ? anime.title.substring(0, 35) + '...' : anime.title;
+        
+        return `
+        <div class="scroll-card" onclick="loadDetail('${anime.url}')">
+            <div class="scroll-card-img">
+                <img src="${anime.image}" alt="${anime.title}" loading="lazy">
+                <div class="ep-badge">Ep ${eps}</div>
+            </div>
+            <div class="scroll-card-title">${displayTitle}</div>
         </div>
-        <div class="scroll-card-title">${displayTitle}</div>
-    </div>
-    `;
-}).join('');
+        `;
+    }).join('');
 
     sectionDiv.innerHTML = headerHtml + `<div class="horizontal-scroll">${cardsHtml}</div>`;
     container.appendChild(sectionDiv);
@@ -255,7 +247,7 @@ async function handleSearch(manualQuery = null) {
                     <div class="scroll-card" onclick="loadDetail('${anime.url}')" style="min-width: auto; max-width: none;">
                         <div class="scroll-card-img">
                             <img src="${anime.image}" alt="${anime.title}" loading="lazy">
-                            ${anime.episode ? `<div class="ep-badge">EP ${anime.episode}</div>` : ''}
+                            <div class="ep-badge">Ep ${anime.score || '?'}</div>
                         </div>
                         <h3 class="scroll-card-title">${anime.title}</h3>
                     </div>
@@ -289,11 +281,8 @@ async function loadDetail(url) {
         
         const studio = "NimeStream"; 
         
-        const totalEps =
-        info.total_episode ??
-        info.episode ??
-        (data.episodes ? data.episodes.length : 0);
-        const duration = info.durasi || info.duration || '-';
+        const totalEps = info.total_episode || info.episode || '?';
+        const duration = info.durasi || info.duration || '0 Menit';
         
         const musim = info.musim || info.season || '';
         const rilis = info.dirilis || info.released || '';
@@ -469,4 +458,3 @@ document.addEventListener('DOMContentLoaded', loadLatest);
 document.getElementById('searchInput').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') handleSearch();
 });
-
