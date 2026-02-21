@@ -33,7 +33,8 @@ async function loadLatest() {
     homeContainer.innerHTML = ''; 
 
     try {
-        HOME_SECTIONS.forEach(async (section, i) => {
+        for (let i = 0; i < HOME_SECTIONS.length; i++) {
+    const section = HOME_SECTIONS[i]; 
             let combinedData = [];
 
             if (section.mode === 'latest') {
@@ -95,13 +96,14 @@ async function loadLatest() {
                     renderSection(section.title, combinedData.slice(0, 15), homeContainer);
                 }
             }
-        });
+        }
+    
     } catch (err) {
         console.error(err);
     } finally {
         loader(false);
     }
-}
+
 
 function removeDuplicates(array, key) {
     return [ ...new Map(array.map(item => [item[key], item])).values() ];
@@ -467,3 +469,4 @@ document.addEventListener('DOMContentLoaded', loadLatest);
 document.getElementById('searchInput').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') handleSearch();
 });
+}

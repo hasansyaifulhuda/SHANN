@@ -15,7 +15,10 @@ const headers = {
 // --- KODE SCRAPER ANDA (Disesuaikan untuk API) ---
 
 async function animeterbaru(page = 1) {
-  const res = await axios.get(`https://cors.caliph.my.id/https://v1.samehadaku.how/anime-terbaru/page/${page}/`, { headers });
+  const res = await axios.get(
+  `https://v1.samehadaku.how/anime-terbaru/page/${page}/`,
+  { headers }
+);
   const $ = cheerio.load(res.data);
   const data = [];
   $('.post-show ul li').each((_, e) => {
@@ -31,7 +34,10 @@ async function animeterbaru(page = 1) {
 }
 
 async function search(query) {
-  const res = await axios.get(`https://cors.caliph.my.id/https://v1.samehadaku.how/?s=${encodeURIComponent(query)}`, { headers });
+  const res = await axios.get(
+  `https://v1.samehadaku.how/?s=${encodeURIComponent(query)}`,
+  { headers }
+);
   const $ = cheerio.load(res.data);
   const data = [];
   $('.animpost').each((_, e) => {
@@ -49,7 +55,7 @@ async function search(query) {
 async function detail(link) {
   // Pastikan link memiliki prefix proxy jika belum ada
   const targetUrl = link.startsWith('http') ? link : `https://v1.samehadaku.how${link}`;
-  const res = await axios.get(`https://cors.caliph.my.id/${targetUrl}`, { headers });
+  const res = await axios.get(targetUrl, { headers });
   const $ = cheerio.load(res.data);
 
   const episodes = [];
@@ -81,7 +87,7 @@ async function detail(link) {
 
 async function download(link) {
   const targetUrl = link.startsWith('http') ? link : `https://v1.samehadaku.how${link}`;
-  const res = await axios.get(`https://cors.caliph.my.id/${targetUrl}`, { headers });
+  const res = await axios.get(targetUrl, { headers });
   const cookies = res.headers['set-cookie']?.map(v => v.split(';')[0]).join('; ') || '';
   const $ = cheerio.load(res.data);
   const data = [];
@@ -97,14 +103,18 @@ async function download(link) {
     const body = new URLSearchParams({ action: 'player_ajax', post, nume, type }).toString();
     
     try {
-        const r = await axios.post('https://cors.caliph.my.id/https://v1.samehadaku.how/wp-admin/admin-ajax.php', body, {
-        headers: {
-            ...headers,
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Cookie': cookies,
-            'Referer': targetUrl
-        }
-        });
+        const r = await axios.post(
+  'https://v1.samehadaku.how/wp-admin/admin-ajax.php',
+  body,
+  {
+    headers: {
+      ...headers,
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Cookie': cookies,
+      'Referer': targetUrl
+    }
+  }
+);
         const $$ = cheerio.load(r.data);
         const iframe = $$('iframe').attr('src');
         if (iframe) data.push({ server: name, url: iframe });
