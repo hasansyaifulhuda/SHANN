@@ -291,7 +291,7 @@ async function loadDetail(url) {
         info.total_episode ??
         info.episode ??
         (data.episodes ? data.episodes.length : 0);
-        const duration = info.durasi || info.duration || '0 Menit';
+        const duration = info.durasi || info.duration || '-';
         
         const musim = info.musim || info.season || '';
         const rilis = info.dirilis || info.released || '';
