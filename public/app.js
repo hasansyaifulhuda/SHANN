@@ -287,28 +287,10 @@ async function loadDetail(url) {
         
         const studio = "NimeStream"; 
         
-        const isEpsExist = data.episodes && data.episodes.length > 0;
-
-let newestEpNum = '?';
-let totalEpCount = isEpsExist ? data.episodes.length : 0;
-
-if (isEpsExist) {
-    let firstEpTitle = data.episodes[0].title;
-    let match = firstEpTitle.match(/(?:Episode|Eps|Ep)\s*(\d+(\.\d+)?)/i);
-    if (match) {
-        newestEpNum = match[1];
-    } else {
-        let nums = firstEpTitle.match(/\d+/g);
-        newestEpNum = nums ? nums[nums.length - 1] : totalEpCount;
-    }
-}
-
-const totalEps = Number(
-    info.total_episode ??
-    info.episode ??
-    newestEpNum ??
-    0
-);
+        const totalEps =
+        info.total_episode ??
+        info.episode ??
+        (data.episodes ? data.episodes.length : 0);
         const duration = info.durasi || info.duration || '0 Menit';
         
         const musim = info.musim || info.season || '';
@@ -318,9 +300,23 @@ const totalEps = Number(
         const genreText = info.genre || info.genres || '';
         const genres = genreText ? genreText.split(',').map(g => g.trim()) : ['Anime'];
 
+        const isEpsExist = data.episodes && data.episodes.length > 0;
         const newestEpUrl = isEpsExist ? data.episodes[0].url : '';
         const oldestEpUrl = isEpsExist ? data.episodes[data.episodes.length - 1].url : '';
         
+        let newestEpNum = '?';
+        let totalEpCount = isEpsExist ? data.episodes.length : 0;
+        
+        if (isEpsExist) {
+            let firstEpTitle = data.episodes[0].title;
+            let match = firstEpTitle.match(/(?:Episode|Eps|Ep)\s*(\d+(\.\d+)?)/i);
+            if (match) {
+                newestEpNum = match[1];
+            } else {
+                let nums = firstEpTitle.match(/\d+/g);
+                newestEpNum = nums ? nums[nums.length - 1] : totalEpCount;
+            }
+        }
 
         const playIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`;
 

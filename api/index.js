@@ -47,74 +47,33 @@ async function search(query) {
 }
 
 async function detail(link) {
-  const base = link.startsWith('http')
-    ? link
-    : `https://v1.samehadaku.how${link}`;
+  // Pastikan link memiliki prefix proxy jika belum ada
+  const targetUrl = link.startsWith('http') ? link : `https://v1.samehadaku.how${link}`;
+  const res = await axios.get(`https://cors.caliph.my.id/${targetUrl}`, { headers });
+  const $ = cheerio.load(res.data);
 
-  const targetUrl = base.endsWith('/')
-    ? base
-    : base + '/';
-
-  let page = 1;
-  let episodes = [];
-  let info = {};
-  let title = '';
-  let image = '';
-  let description = '';
-
-  while (page <= 50) { // safety limit
-    const url = page === 1
-      ? targetUrl
-      : `${targetUrl}page/${page}/`;
-
-    const res = await axios.get(
-      `https://cors.caliph.my.id/${url}`,
-      { headers }
-    );
-
-    const $ = cheerio.load(res.data);
-
-    if (page === 1) {
-      title = $('title')
-        .text()
-        .replace(' - Samehadaku', '')
-        .trim();
-
-      image = $('meta[property="og:image"]').attr('content');
-
-      description =
-        $('.entry-content').text().trim() ||
-        $('meta[name="description"]').attr('content');
-
-      $('.anim-senct .right-senc .spe span').each((_, e) => {
-        const t = $(e).text();
-        if (t.includes(':')) {
-          const [k, v] = t.split(':');
-          info[k.trim().toLowerCase().replace(/\s+/g, '_')] = v.trim();
-        }
-      });
-    }
-
-    const currentEpisodes = [];
-
-    $('.lstepsiode ul li').each((_, e) => {
-      currentEpisodes.push({
-        title: $(e).find('.epsleft .lchx a').text().trim(),
-        url: $(e).find('.epsleft .lchx a').attr('href'),
-        date: $(e).find('.epsleft .date').text().trim()
-      });
+  const episodes = [];
+  $('.lstepsiode ul li').each((_, e) => {
+    episodes.push({
+      title: $(e).find('.epsleft .lchx a').text().trim(),
+      url: $(e).find('.epsleft .lchx a').attr('href'),
+      date: $(e).find('.epsleft .date').text().trim()
     });
+  });
 
-    if (currentEpisodes.length === 0) break;
-
-    episodes.push(...currentEpisodes);
-    page++;
-  }
+  const info = {};
+  $('.anim-senct .right-senc .spe span').each((_, e) => {
+    const t = $(e).text();
+    if (t.includes(':')) {
+      const [k, v] = t.split(':');
+      info[k.trim().toLowerCase().replace(/\s+/g, '_')] = v.trim();
+    }
+  });
 
   return {
-    title,
-    image,
-    description,
+    title: $('title').text().replace(' - Samehadaku', '').trim(),
+    image: $('meta[property="og:image"]').attr('content'),
+    description: $('.entry-content').text().trim() || $('meta[name="description"]').attr('content'),
     episodes,
     info
   };
@@ -122,7 +81,7 @@ async function detail(link) {
 
 async function download(link) {
   const targetUrl = link.startsWith('http') ? link : `https://v1.samehadaku.how${link}`;
-  await axios.get(url, { headers });
+  const res = await axios.get(`https://cors.caliph.my.id/${targetUrl}`, { headers });
   const cookies = res.headers['set-cookie']?.map(v => v.split(';')[0]).join('; ') || '';
   const $ = cheerio.load(res.data);
   const data = [];
