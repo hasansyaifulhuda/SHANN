@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Streaming</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="logo"><span class="logo-accent">SHANNN</span></div>
+        
+        <div class="nav-right">
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Cari anime...">
+                <button onclick="handleSearch()" class="search-btn">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </button>
+            </div>
+        
+        </div>
+    </nav>
+
+        </div>
+    </aside>
+
+    <main id="app">
+        <div id="loading" class="hidden">
+            <div class="spinner"></div>
+            <p>Memuat Anime...</p>
+        </div>
+        
+        <div id="home-view"></div>
+
+        <div id="detail-view" class="hidden">
+            <div class="nav-back">
+                <button onclick="goHome()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                    BACK
+                </button>
+            </div>
+            
+            <div id="anime-info"></div>
+            
+            <div id="episode-header-container"></div>
+            <div class="episode-grid" id="episode-grid"></div>
+        </div>
+
+        <div id="watch-view" class="hidden">
+            <div class="nav-back">
+                <button onclick="backToDetail()">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                    List Episode
+                </button>
+            </div>
+            
+            <div class="video-wrapper">
+                <iframe id="video-player" src="" allowfullscreen></iframe>
+            </div>
+            
+            <h2 id="video-title" class="video-main-title"></h2>
+            
+            <div class="server-label">Pilih Server:</div>
+            <div class="server-list" id="server-options"></div>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+</html>
