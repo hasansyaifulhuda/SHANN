@@ -103,7 +103,7 @@ async function loadLatest() {
     } finally {
         loader(false);
     }
-
+}
 
 function removeDuplicates(array, key) {
     return [ ...new Map(array.map(item => [item[key], item])).values() ];
@@ -469,4 +469,4 @@ document.addEventListener('DOMContentLoaded', loadLatest);
 document.getElementById('searchInput').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') handleSearch();
 });
-}
+
