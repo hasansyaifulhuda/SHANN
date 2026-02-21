@@ -122,7 +122,7 @@ async function detail(link) {
 
 async function download(link) {
   const targetUrl = link.startsWith('http') ? link : `https://v1.samehadaku.how${link}`;
-  const res = await axios.get(`https://cors.caliph.my.id/${targetUrl}`, { headers });
+  await axios.get(url, { headers });
   const cookies = res.headers['set-cookie']?.map(v => v.split(';')[0]).join('; ') || '';
   const $ = cheerio.load(res.data);
   const data = [];
