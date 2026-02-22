@@ -268,12 +268,6 @@ ${historyData.map(anime => `
 <div class="scroll-card" onclick="loadDetail('${anime.url}')" style="min-width:auto;max-width:none;">
     <div class="scroll-card-img">
         <img src="${anime.image}" alt="${anime.title}" loading="lazy">
-        ${anime.score &&
-          anime.score !== '-' &&
-          anime.score !== '0' &&
-          !isNaN(parseFloat(anime.score))
-            ? `<div class="ep-badge">⭐ ${anime.score}</div>`
-            : ''}
     </div>
     <h3 class="scroll-card-title">${anime.title}</h3>
 </div>
