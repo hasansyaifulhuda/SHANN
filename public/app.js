@@ -7,7 +7,7 @@ if ('serviceWorker' in navigator) {
 const API_BASE = '/api'; 
 
 // --- INDEXEDDB UNTUK HISTORY & FAVORITE ---
-const DB_NAME = '-';
+const DB_NAME = 'NimeStreamDB';
 const STORE_HISTORY = 'history';
 const STORE_FAV = 'favorites';
 
@@ -232,10 +232,13 @@ async function loadCategory(genre, btnElement) {
             </div>
             <div class="anime-grid">
                 ${combinedData.map(anime => `
-                    <div class="scroll-card" onclick="loadDetail('${anime.url}')" style="min-width: auto; max-width: none;">
-                        <div class="scroll-card-img"><img src="${anime.image}" alt="${anime.title}" loading="lazy"><div class="ep-badge">Ep ${anime.score || '?'}</div></div>
-                        <h3 class="scroll-card-title">${anime.title}</h3>
-                    </div>`).join('')}
+    <div class="scroll-card" onclick="loadDetail('${anime.url}')">
+        <div class="scroll-card-img">
+            <img src="${anime.image}" alt="${anime.title}" loading="lazy">
+        </div>
+        <h3 class="scroll-card-title">${anime.title}</h3>
+    </div>
+`).join('')}
             </div>`;
     } catch (err) { console.error(err); } finally { loader(false); }
 }
@@ -334,7 +337,6 @@ function renderHeroSlider(title, data, container) {
                 <img src="${anime.image}" class="hero-bg" alt="${anime.title}" loading="${index === 0 ? 'eager' : 'lazy'}">
                 <div class="hero-overlay"></div>
                 <div class="hero-content">
-                    ${eps ? `<div class="hero-badge">${eps}</div>` : ''}
                     <h2 class="hero-title">${anime.title}</h2>
                     <div class="hero-meta" data-url="${anime.url}"><span>⭐ ${score}</span> • <span>${type}</span> • <span>${year}</span></div>
                     <button onclick="loadDetail('${anime.url}')" class="hero-btn"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Nonton Sekarang</button>
@@ -377,14 +379,18 @@ function renderSection(title, data, container) {
         </div>`;
 
     const cardsHtml = data.map(anime => {
-        const eps = anime.episode || anime.score || '?'; 
-        const displayTitle = anime.title.length > 35 ? anime.title.substring(0, 35) + '...' : anime.title;
-        return `
-        <div class="scroll-card" onclick="loadDetail('${anime.url}')">
-            <div class="scroll-card-img"><img src="${anime.image}" alt="${anime.title}" loading="lazy"><div class="ep-badge">Ep ${eps}</div></div>
-            <div class="scroll-card-title">${displayTitle}</div>
-        </div>`;
-    }).join('');
+    const displayTitle = anime.title.length > 35 
+        ? anime.title.substring(0, 35) + '...' 
+        : anime.title;
+
+    return `
+    <div class="scroll-card" onclick="loadDetail('${anime.url}')">
+        <div class="scroll-card-img">
+            <img src="${anime.image}" alt="${anime.title}" loading="lazy">
+        </div>
+        <div class="scroll-card-title">${displayTitle}</div>
+    </div>`;
+}).join('');
 
     sectionDiv.innerHTML = headerHtml + `<div class="horizontal-scroll">${cardsHtml}</div>`;
     container.appendChild(sectionDiv);
@@ -412,7 +418,9 @@ async function handleSearch(manualQuery = null) {
             <div class="anime-grid">
                 ${data.map(anime => `
                     <div class="scroll-card" onclick="loadDetail('${anime.url}')" style="min-width: auto; max-width: none;">
-                        <div class="scroll-card-img"><img src="${anime.image}" alt="${anime.title}" loading="lazy"><div class="ep-badge">Ep ${anime.score || '?'}</div></div>
+                        <div class="scroll-card-img">
+    <img src="${anime.image}" alt="${anime.title}" loading="lazy">
+</div>
                         <h3 class="scroll-card-title">${anime.title}</h3>
                     </div>`).join('')}
             </div>`;
@@ -433,11 +441,24 @@ async function loadDetail(url) {
 
         const info = data.info || {};
         const status = info.status || 'Ongoing';
-        const score = info.skor || info.score || '0';
+        let score = info.score || info.skor || '-';
+        if (score === 0 || score === '0') score = '-';
         const type = info.tipe || info.type || 'TV';
         const studio = "-"; 
-        const totalEps = info.total_episode || '?';
-        const duration = info.duration || '-';
+       let totalEps = '-';
+
+if (info.total_episode && info.total_episode !== '0') {
+    totalEps = info.total_episode;
+} else if (info.episode && info.episode !== '0') {
+    totalEps = info.episode;
+} else if (Array.isArray(data.episodes) && data.episodes.length > 0) {
+    totalEps = data.episodes.length;
+}
+        const duration =
+    info.duration ||
+    info.durasi ||
+    info.length ||
+    '-';
         const musim = info.musim || info.season || '';
         const rilis = info.dirilis || info.released || '';
         const seasonInfo = `${musim} ${rilis}`.trim() || 'Unknown Date';
