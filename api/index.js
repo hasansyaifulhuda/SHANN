@@ -47,11 +47,20 @@ async function search(query) {
 }
 
 async function detail(link) {
-  // Pastikan link memiliki prefix proxy jika belum ada
-  const targetUrl = link.startsWith('http') ? link : `https://v1.samehadaku.how${link}`;
-  const res = await axios.get(`https://cors.caliph.my.id/${targetUrl}`, { headers });
+  const targetUrl = link.startsWith('http')
+    ? link
+    : `https://v1.samehadaku.how${link}`;
+
+  const res = await axios.get(
+    `https://cors.caliph.my.id/${targetUrl}`,
+    { headers }
+  );
+
   const $ = cheerio.load(res.data);
 
+  // ======================
+  // EPISODES
+  // ======================
   const episodes = [];
   $('.lstepsiode ul li').each((_, e) => {
     episodes.push({
@@ -61,19 +70,70 @@ async function detail(link) {
     });
   });
 
-  const info = {};
-  $('.anim-senct .right-senc .spe span').each((_, e) => {
-    const t = $(e).text();
-    if (t.includes(':')) {
-      const [k, v] = t.split(':');
-      info[k.trim().toLowerCase().replace(/\s+/g, '_')] = v.trim();
-    }
+  // ======================
+  // FLEXIBLE INFO PARSER
+  // ======================
+  const info = {
+    status: null,
+    score: null,
+    type: null,
+    total_episode: null,
+    duration: null,
+    studio: null,
+    season: null,
+    released: null,
+    genre: null
+  };
+
+  $('.anim-senct .right-senc .spe span').each((_, el) => {
+    const text = $(el).text().trim().toLowerCase();
+
+    if (text.includes('status'))
+      info.status = text.split(':').pop().trim();
+
+    if (text.includes('skor') || text.includes('score'))
+      info.score = text.split(':').pop().trim();
+
+    if (text.includes('tipe') || text.includes('type'))
+      info.type = text.split(':').pop().trim();
+
+    if (text.includes('total'))
+      info.total_episode = text.replace(/[^0-9]/g, '');
+
+    if (text.includes('durasi'))
+      info.duration = text.split(':').pop().trim();
+
+    if (text.includes('studio'))
+      info.studio = text.split(':').pop().trim();
+
+    if (text.includes('musim') || text.includes('season'))
+      info.season = text.split(':').pop().trim();
+
+    if (text.includes('rilis') || text.includes('released'))
+      info.released = text.split(':').pop().trim();
+
+    if (text.includes('genre'))
+      info.genre = text.split(':').pop().trim();
   });
+
+  // ======================
+  // AUTO FALLBACK LOGIC
+  // ======================
+
+  if (!info.total_episode && episodes.length > 0) {
+    info.total_episode = episodes.length;
+  }
+
+  if (!info.duration) {
+    info.duration = "Tidak diketahui";
+  }
 
   return {
     title: $('title').text().replace(' - Samehadaku', '').trim(),
     image: $('meta[property="og:image"]').attr('content'),
-    description: $('.entry-content').text().trim() || $('meta[name="description"]').attr('content'),
+    description:
+      $('.entry-content').text().trim() ||
+      $('meta[name="description"]').attr('content'),
     episodes,
     info
   };
