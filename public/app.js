@@ -437,7 +437,7 @@ async function loadDetail(url) {
         const type = info.tipe || info.type || 'TV';
         const studio = "-"; 
         const totalEps = info.total_episode || '?';
-        const duration = info.duration || 'Tidak diketahui';
+        const duration = info.duration || '-';
         const musim = info.musim || info.season || '';
         const rilis = info.dirilis || info.released || '';
         const seasonInfo = `${musim} ${rilis}`.trim() || 'Unknown Date';
