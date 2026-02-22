@@ -125,7 +125,7 @@ async function detail(link) {
   }
 
   if (!info.duration) {
-    info.duration = "Tidak diketahui";
+    info.duration = "-";
   }
 
   return {
