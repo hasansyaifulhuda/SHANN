@@ -91,8 +91,16 @@ async function detail(link) {
     if (text.includes('status'))
       info.status = text.split(':').pop().trim();
 
-    if (text.includes('skor') || text.includes('score'))
-      info.score = text.split(':').pop().trim();
+    if (text.includes('skor') || text.includes('score')) {
+    const rawScore = text.split(':').pop().trim();
+    const numericScore = parseFloat(rawScore);
+
+  if (!isNaN(numericScore) && numericScore > 0) {
+    info.score = numericScore.toString();
+  } else {
+    info.score = null;
+  }
+}
 
     if (text.includes('tipe') || text.includes('type'))
       info.type = text.split(':').pop().trim();
