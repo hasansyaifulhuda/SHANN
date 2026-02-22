@@ -262,7 +262,9 @@ async function loadFavorites() {
         container.innerHTML = `<div class="empty-state"><svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" style="margin-bottom:15px;"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg><h2>Belum ada Favorit</h2><p>Simpan anime kesukaanmu dengan menekan ikon hati.</p></div>`;
         return;
     }
-    container.innerHTML = `<div class="anime-grid">${favData.map(anime => `<div class="scroll-card" onclick="loadDetail('${anime.url}')" style="min-width: auto; max-width: none;"><div class="scroll-card-img"><img src="${anime.image}" alt="${anime.title}" loading="lazy"><div class="ep-badge">⭐ ${anime.score || '?'}</div></div><h3 class="scroll-card-title">${anime.title}</h3></div>`).join('')}</div>`;
+    container.innerHTML = `<div class="anime-grid">${favData.map(anime => `<div class="scroll-card" onclick="loadDetail('${anime.url}')" style="min-width: auto; max-width: none;"><div class="scroll-card-img"><img src="${anime.image}" alt="${anime.title}" loading="lazy">${anime.score && anime.score !== '-' ? `
+<div class="ep-badge">⭐ ${anime.score}</div>
+` : ''}</div><h3 class="scroll-card-title">${anime.title}</h3></div>`).join('')}</div>`;
 }
 
 async function loadLatest() {
