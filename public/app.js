@@ -7,7 +7,7 @@ if ('serviceWorker' in navigator) {
 const API_BASE = '/api'; 
 
 // --- INDEXEDDB UNTUK HISTORY & FAVORITE ---
-const DB_NAME = 'NimeStreamDB';
+const DB_NAME = '-';
 const STORE_HISTORY = 'history';
 const STORE_FAV = 'favorites';
 
@@ -431,7 +431,7 @@ async function loadDetail(url) {
         const status = info.status || 'Ongoing';
         const score = info.skor || info.score || '0';
         const type = info.tipe || info.type || 'TV';
-        const studio = "NimeStream"; 
+        const studio = "-"; 
         const totalEps = info.total_episode || info.episode || '?';
         const duration = info.durasi || info.duration || '0 Menit';
         const musim = info.musim || info.season || '';
