@@ -161,8 +161,8 @@ async function fetchWAFollowers() {
 }
 
 function switchTab(tabName) {
-   hide('home-view'); hide('anime-view'); hide('recent-view');
-hide('favorite-view'); hide('detail-view'); hide('watch-view');
+    hide('home-view'); hide('anime-view'); hide('recent-view');
+    hide('favorite-view'); hide('developer-view'); hide('detail-view'); hide('watch-view');
     show('bottomNav');
     
     document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
@@ -192,7 +192,11 @@ hide('favorite-view'); hide('detail-view'); hide('watch-view');
         show('recent-view'); document.getElementById('tab-recent').classList.add('active'); loadRecentHistory(); 
     } else if (tabName === 'favorite') {
         show('favorite-view'); document.getElementById('tab-favorite').classList.add('active'); loadFavorites(); 
-    } 
+    } else if (tabName === 'developer') {
+        show('developer-view'); 
+        document.getElementById('tab-developer').classList.add('active');
+        fetchWAFollowers(); // Auto Load Followers
+    }
 }
 
 function renderCategoryPage() {
@@ -423,7 +427,7 @@ async function loadDetail(url) {
         const data = await res.json();
         
         hide('home-view'); hide('anime-view'); hide('recent-view');
-        hide('favorite-view'); hide('watch-view');
+        hide('favorite-view'); hide('developer-view'); hide('watch-view');
         hide('bottomNav'); 
         show('detail-view');
 
@@ -432,8 +436,8 @@ async function loadDetail(url) {
         const score = info.skor || info.score || '0';
         const type = info.tipe || info.type || 'TV';
         const studio = "-"; 
-        const totalEps = info.total_episode || info.episode || (data.episodes ? data.episodes.length : '-');
-        const duration = info.durasi || info.duration || '-';
+        const totalEps = info.total_episode || '?';
+        const duration = info.duration || 'Tidak diketahui';
         const musim = info.musim || info.season || '';
         const rilis = info.dirilis || info.released || '';
         const seasonInfo = `${musim} ${rilis}`.trim() || 'Unknown Date';
