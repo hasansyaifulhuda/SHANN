@@ -251,8 +251,13 @@ async function loadRecentHistory() {
         container.innerHTML = `<div class="empty-state"><svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2" style="margin-bottom:15px;"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg><h2>Belum ada riwayat</h2><p>Anime yang baru saja kamu lihat akan muncul di sini.</p></div>`;
         return;
     }
-    container.innerHTML = `<div class="anime-grid">${historyData.map(anime => `<div class="scroll-card" onclick="loadDetail('${anime.url}')" style="min-width: auto; max-width: none;"><div class="scroll-card-img"><img src="${anime.image}" alt="${anime.title}" loading="lazy"><div class="ep-badge">⭐ ${anime.score || '?'}</div></div><h3 class="scroll-card-title">${anime.title}</h3></div>`).join('')}</div>`;
-}
+    container.innerHTML = `<div class="anime-grid">${historyData.map(anime => `
+<div class="scroll-card" onclick="loadDetail('${anime.url}')" style="min-width: auto; max-width: none;">
+    <div class="scroll-card-img">
+        <img src="${anime.image}" alt="${anime.title}" loading="lazy">
+    </div>
+    <h3 class="scroll-card-title">${anime.title}</h3>
+</div>`).join('')}</div>`;}
 
 async function loadFavorites() {
     const container = document.getElementById('favorite-results-container');
