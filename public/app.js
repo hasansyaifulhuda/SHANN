@@ -432,8 +432,8 @@ async function loadDetail(url) {
         const score = info.skor || info.score || '0';
         const type = info.tipe || info.type || 'TV';
         const studio = "-"; 
-        const totalEps = info.total_episode || info.episode || '?';
-        const duration = info.durasi || info.duration || '0 Menit';
+        const totalEps = info.total_episode || info.episode || (data.episodes ? data.episodes.length : '-');
+        const duration = info.durasi || info.duration || '-';
         const musim = info.musim || info.season || '';
         const rilis = info.dirilis || info.released || '';
         const seasonInfo = `${musim} ${rilis}`.trim() || 'Unknown Date';
